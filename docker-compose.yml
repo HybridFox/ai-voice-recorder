@@ -1,0 +1,68 @@
+version: "3"
+services:
+    server:
+        build:
+            context: server
+            dockerfile: Dockerfile.dev
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        container_name: avr-server
+        volumes:
+            - ./server:/app:delegated
+            - ./uploads:/app/uploads:delegated
+        environment:
+            PORT: 3001
+        ports:
+            - 3001:3001
+        networks:
+            - avr
+
+    client:
+        build:
+            context: client
+            dockerfile: Dockerfile.dev
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        container_name: avr-client
+        volumes:
+            - ./client:/app:delegated
+        environment:
+            PORT: 3000
+        ports:
+            - 3000:3000
+        networks:
+            - avr
+
+    # postgres:
+    #     image: "postgres:12.3-alpine"
+    #     container_name: postgres
+    #     environment:
+    #         POSTGRES_DB: radiopanel
+    #         POSTGRES_USER: localuser
+    #         POSTGRES_PASSWORD: EHajqEuoPG8wCxfcQRpz
+    #         PGDATA: /data/db
+    #     ports:
+    #         - 5432:5432
+    #     volumes:
+    #         - ./data:/data/db
+    #     networks:
+    #         - radiopanel
+
+    # redis:
+    #     image: redis:6.0.6-alpine
+    #     container_name: redis
+    #     ports:
+    #         - 6379:6379
+    #     command: ["redis-server", "--appendonly", "yes"]
+    #     volumes:
+    #         - redis-data:/data
+    #     networks:
+    #         - radiopanel
+
+# volumes:
+#     postgres-data:
+#     redis-data:
+#     elastic-data:
+
+networks:
+    avr:
